@@ -1,41 +1,86 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+/**
+ * server.js - Set up a server
+ * @type {Parsers|*}
+ */
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+/*
+ * Provides a way of working with directories and file paths
+ * https://www.npmjs.com/package/path
+ */
+const path = require('path')
 
-var app = express();
+/*
+ * This is an express server
+ * https://www.npmjs.com/package/express
+ */
+const express = require('express')
+const server = express()
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+/*
+ * Middleware for parsing the request body
+ * https://www.npmjs.com/package/body-parser
+ */
+const bodyParser = require('body-parser')
+server.use(bodyParser.json())
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+//server.use(express.json())
+server.use(bodyParser.urlencoded({ extended: true })) //it was false
+server.use(express.static(path.join(__dirname, 'public')))
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+/**
+ * This takes care of validation and sanitation
+ * https://www.npmjs.com/package/express-validator
+ */
+const  expressValidator = require('express-validator')
+server.use(expressValidator())
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
+// parse requests of content-type - application/x-www-form-urlencoded
+//app.use(bodyParser.urlencoded({ extended: true }))
+//cors' stuffies
+const cors = require('cors')
+server.use(cors())
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+require('dotenv').config()
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+/*
+ * Set various HTTP headers to help secure the server
+ * https://www.npmjs.com/package/helmet
+ */
+const helmet = require('helmet')
+server.use(helmet())
 
-module.exports = app;
+/*
+ * Ruby-like logger for logging messages
+ * https://www.npmjs.com/package/logger
+ */
+const logger = require('morgan');
+server.use(logger('dev'));
+
+/*
+ * Database object modelling
+ * https://www.npmjs.com/package/mongoose
+ */
+const mongoose = require('mongoose')
+
+// Connect to the Mongo database
+// mongoose.Promise = global.Promise
+// mongoose.connect('mongodb://localhost/carefinder', { useNewUrlParser: true })
+
+// Set up the routes
+// -----------------
+
+const apiRoutes = require('./src/routes/api-routes')
+server.use('/api', apiRoutes)
+
+// Handle errors
+// -------------
+const errorHandlers = require('./src/middleware/error-handlers')
+
+// Catch all invalid routes
+server.use(errorHandlers.invalidRoute)
+
+// Handle mongoose errors
+server.use(errorHandlers.validationErrors)
+
+// Export the server object
+module.exports = server;
