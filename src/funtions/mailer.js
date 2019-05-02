@@ -19,14 +19,9 @@ module.exports.sendEmail = async function (){
       to: 'xxx@gmail.com', // list of receivers
       subject: 'EMERGENCY - PLEASE - ME ✔', // Subject line
       text: 'Your plant needs water!!!!', // plain text body
-      html: '<b>Your plant needs water!!!!</b>' // html body
+      html: '<h1>Your plant needs water!!!!</h1>' // html body
     });
   
-    console.log("Message sent: %s", info.messageId);
-    // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-  
-    // Preview only available when sending through an Ethereal account
-    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-    // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+    console.log('Message sent :D');
   }
   
