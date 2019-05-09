@@ -5,6 +5,6 @@ const {catchErrors} = require('../middleware/error-handlers')
 const router = express.Router()
 
 //user routes
-router.post('/send', catchErrors(mailerController.store))
+router.post('/send/:passkey', catchErrors(mailerController.store))
 
 module.exports = router

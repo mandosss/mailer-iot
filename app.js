@@ -70,7 +70,7 @@ const mongoose = require('mongoose')
 // -----------------
 
 const apiRoutes = require('./src/routes/api-routes')
-server.use('/api', apiRoutes)
+server.use('/apinode', apiRoutes)
 
 // Handle errors
 // -------------
