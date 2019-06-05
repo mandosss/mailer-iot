@@ -21,7 +21,5 @@ module.exports.sendEmail = async function (){
       text: 'Your plant needs water!!!!', // plain text body
       html: '<h1>Your plant needs water!!!!</h1>' // html body
     });
-  
-    console.log('Message sent :D');
-  }
+}
   

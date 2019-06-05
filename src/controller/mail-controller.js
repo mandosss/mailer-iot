@@ -1,13 +1,17 @@
 var sender = require('../funtions/mailer');
 
-/* GET home page. */
+/* POST for termperature. */
 exports.store = async(req, res, next) => {
-  let tempPasskey = req.params.passkey
-  if(tempPasskey == process.env.SECRET_PASSKEY){
-      await sender.sendEmail()
-      res.status(201).send({message: 'Success!'})
+  let moistPasskey = req.body.passkey
+  let moisture = req.body.moisture
+  if(moistPasskey == process.env.SECRET_PASSKEY){
+      if (moisture <= process.env.MOISTURE_THRESHOLD){
+        await sender.sendEmail()
+        res.status(201).send({message: 'Success!'})
+      }
+      res.status(401).send({message: 'Plant does not need water'})
   }
   else{
-    res.status(401).send({message: 'Unauthorized'})
+    res.status(401).send({message: 'Unauthorized' })
   }
 };
